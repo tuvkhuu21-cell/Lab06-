@@ -1,0 +1,9 @@
+From: Valid, Frozen, Missing
+To: Valid, Missing, SameAsFrom
+Amount: Zero, Normal, OverBalance, OverLimit
+Currency: Same, Different
+
+IF [From] = "Missing" THEN [To] = "Valid" AND [Amount] = "Normal";
+IF [From] = "Frozen" THEN [To] = "Valid" AND [Amount] = "Normal";
+IF [To] = "Missing" OR [To] = "SameAsFrom" THEN [From] = "Valid" AND [Amount] = "Normal";
+IF [Amount] = "Zero" OR [Amount] = "OverBalance" OR [Amount] = "OverLimit" THEN [From] = "Valid" AND [To] = "Valid";
