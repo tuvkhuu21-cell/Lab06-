@@ -55,11 +55,93 @@ From → To → Amount
 таамаглал бөгөөд API-ийн тодорхойлолтод
 заагаагүй.
 
-### Бүрэн олонлог
+### A2. IF нөхцөлүүд
+
+1. IF To = SameAsFrom THEN From данс байх ёстой.
+2. IF Amount = OverBalance THEN үлдэгдэл хүрэлцэхгүй.
+3. IF Amount = OverLimit THEN өдрийн үлдсэн лимит хүрэлцэхгүй.
+4. IF Currency = Different THEN ханшийн хөрвүүлэлт хийнэ.
+
+### Далд орчны нөхцөл
+
+Өдрийн лимитийн өмнөх ашиглалт нь
+шилжүүлэг амжилттай болох эсэхэд нөлөөлнө.
+
+Жишээ:
+- Өдрийн лимит: 1,000,000 MNT
+- Өмнө ашигласан: 500,000 MNT
+- Үлдсэн лимит: 500,000 MNT
+
+### A2. Хослолын тооцоо
+
+Хязгаарлалтгүй бүрэн олонлог:
 
 N = 3 × 3 × 4 × 2 = 72
 
-N → M = 72 → (A2 хязгаарлалтыг эцэслэсний дараа тооцно)
+[ERROR] сонголтуудыг тусгаарлан шалгах,
+[SINGLE] сонголтыг нэг удаа ашиглах
+стратеги сонгосон.
+
+Хязгаарлалтын дараах M тоог
+PICT моделийн нөхцөлүүдтэй уялдуулан
+эцэслэж тооцно.
+
+A3 хүснэгтэд 10 тест боловсруулсан.
+TC10 нь олон алдаатай тусгай тест юм.
+
+### A3. Тестийн спецификаци
+
+| ID | From | To | Amount | Currency | Expected |
+|---|---|---|---|---|---|
+| TC01 | Valid | Valid | Normal | Same | 201 OK |
+| TC02 | Valid | Valid | Normal | Different | 201 OK |
+| TC03 | Missing | Valid | Normal | Same | 200 ERROR_NO_FROM |
+| TC04 | Frozen | Valid | Normal | Same | 200 ERROR_FROZEN |
+| TC05 | Valid | Missing | Normal | Same | 200 ERROR_NO_TO |
+| TC06 | Valid | SameAsFrom | Normal | Same | 200 ERROR_SAME_ACCOUNT |
+| TC07 | Valid | Valid | Zero | Same | 200 ERROR_BAD_AMOUNT |
+| TC08 | Valid | Valid | OverBalance | Same | 200 ERROR_INSUFFICIENT |
+| TC09 | Valid | Valid | OverLimit | Same | 200 ERROR_LIMIT |
+| TC10 | Missing | Missing | Zero | Same | 200 ERROR_NO_FROM |
+
 ## Хэсэг B: PICT
+### B1. Browser model — Pairwise Testing
+
+Browser model нь дараах 6 параметртэй:
+
+- Content: Allow, Restrict, Block
+- Cookies: Allow, Restrict, Block
+- Popups: Yes, No
+- Addons: Yes, No
+- Attacks: Yes, No
+- Forgeries: Yes, No
+
+Бүрэн олонлог:
+
+N = 3 × 3 × 2 × 2 × 2 × 2 = 144
+
+### PICT үр дүн
+
+| Testing method | Test cases |
+|---|---:|
+| Full combination | 144 |
+| PICT 2-way | 10 |
+| PICT 3-way | 20 |
+| Lecture manual 2-way | 9 |
+
+### Үр дүнгийн тайлбар
+
+PICT 2-way тестээр 10 тест үүссэн бөгөөд
+лекц дээр гараар боловсруулсан 9 тестээс
+нэгээр олон байна.
+
+Учир нь PICT нь greedy алгоритм ашигладаг.
+Энэ алгоритм нь параметрүүдийн хослолыг
+хамруулах боловч хамгийн цөөн тестийн
+тоог заавал гаргах баталгаа өгдөггүй.
+
+3-way тестээр 20 тест үүссэн.
+Энэ нь 2-way тестээс олон боловч
+бүрэн олонлогийн 144 тестээс цөөн байна.
 
 ## Дүгнэлт
